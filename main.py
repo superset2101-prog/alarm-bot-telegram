@@ -1,17 +1,17 @@
-from telegram.ext import Updater, CommandHandler
+from telegram.ext import ApplicationBuilder, CommandHandler
 import datetime
 import threading
 import os
 
 TOKEN = os.getenv("TOKEN")
 
-def start(update, context):
-    update.message.reply_text("Привет! Я будильник. Напиши /alarm 07:30")
+async def start(update, context):
+    await update.message.reply_text("Привет! Я будильник. Напиши /alarm 07:30")
 
-def alarm(update, context):
+async def alarm(update, context):
     try:
         if len(context.args) != 1:
-            update.message.reply_text("Формат: /alarm 07:30")
+            await update.message.reply_text("Формат: /alarm 07:30")
             return
 
         user_time = context.args[0]
@@ -29,20 +29,18 @@ def alarm(update, context):
             context.bot.send_message(chat_id=chat_id, text="🔔 Пора просыпаться!")
 
         threading.Timer(delay, send_alarm).start()
-        update.message.reply_text(f"Будильник установлен на {alarm_time.strftime('%H:%M')}")
+        await update.message.reply_text(f"Будильник установлен на {alarm_time.strftime('%H:%M')}")
 
     except Exception as e:
-        update.message.reply_text("Ошибка. Формат: /alarm 07:30")
+        await update.message.reply_text("Ошибка. Формат: /alarm 07:30")
 
 def main():
-    updater = Updater(TOKEN, use_context=True)
-    dp = updater.dispatcher
+    app = ApplicationBuilder().token(TOKEN).build()
 
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("alarm", alarm))
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("alarm", alarm))
 
-    updater.start_polling()
-    updater.idle()
+    app.run_polling()
 
 if __name__ == '__main__':
     main()
