@@ -10,8 +10,8 @@ def main():
     app.add_handler(CommandHandler("start", start))
 
     # Настройка webhook
-    port = int(os.getenv("PORT", 8443))  # Render использует переменную PORT
-    webhook_url = os.getenv("WEBHOOK_URL")  # Например, https://your-app.onrender.com
+    port = int(os.getenv("PORT", 8443))
+    webhook_url = os.getenv("WEBHOOK_URL")
     app.run_webhook(
         listen="0.0.0.0",
         port=port,
